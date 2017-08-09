@@ -1,0 +1,20 @@
+{
+    "name": "leray/yaf-layout",
+    "description": "layout for yaf",
+    "version": "0.0.1",
+    "authors": [
+        {
+            "name": "Yunlong2cn",
+            "email": "384345134@qq.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Leray\\Yaf\\": "src/"
+        },
+        "classmap": ["src/"]
+    }
+}

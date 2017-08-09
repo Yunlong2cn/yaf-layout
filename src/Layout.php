@@ -1,0 +1,45 @@
+<?php
+namespace Leray\Yaf;
+
+use Yaf\Plugin_Abstract;
+use Yaf\Request_Abstract;
+use Yaf\Response_Abstract;
+
+use Yaf\View\Simple;
+
+class Layout extends Plugin_Abstract
+{
+	private $layoutDir;
+    private $layoutFile;
+
+    private $layout;
+
+
+    private $vars;
+
+    public function __construct($layoutDir, $layoutFile = 'default.phtml')
+    {
+        $this->layoutDir = $layoutDir;
+        $this->layoutFile = $layoutFile;
+
+        $this->layout = new Simple($this->layoutDir);
+    }
+
+    public function __set($key, $value)
+    {
+        $this->layout->assign($key, $value);
+    }
+
+    public function postDispatch(Request_Abstract $request, Response_Abstract $response)
+    {
+    	// 获取已响应内容
+    	$body = $response->getBody();
+
+    	$this->layout->content = $body;
+
+
+    	$output = $this->layout->render($this->layoutFile);
+    	// 输出数据
+    	$response->setBody($output);
+	}
+}

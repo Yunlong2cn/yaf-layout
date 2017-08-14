@@ -30,6 +30,12 @@ class Layout extends Plugin_Abstract
         $this->layout->assign($key, $value);
     }
 
+    
+
+    public function dispatchLoopShutdown(Request_Abstract $request, Response_Abstract $response)
+    {
+    }
+
     public function postDispatch(Request_Abstract $request, Response_Abstract $response)
     {
     	// 获取已响应内容
@@ -37,6 +43,9 @@ class Layout extends Plugin_Abstract
 
     	$this->layout->content = $body;
 
+        $this->layout->module = $request->getModuleName();
+        $this->layout->controller = $request->getControllerName();
+        $this->layout->action = $request->getActionName();
 
     	$output = $this->layout->render($this->layoutFile);
     	// 输出数据

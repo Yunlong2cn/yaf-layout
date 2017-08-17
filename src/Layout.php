@@ -17,20 +17,24 @@ class Layout extends Plugin_Abstract
 
     private $vars;
 
+    private static $myLayout;
+
     public function __construct($layoutDir, $layoutFile = 'default.phtml')
     {
         $this->layoutDir = $layoutDir;
         $this->layoutFile = $layoutFile;
-
-        $this->layout = new Simple($this->layoutDir);
     }
 
     public function __set($key, $value)
     {
-        $this->layout->assign($key, $value);
+        // $this->layout->assign($key, $value);
+        $this->vars[$key] = $value;
     }
 
-    
+    public static function getInstance($layoutDir, $layoutFile = 'default.phtml')
+    {
+        return self::$myLayout ?: new self($layoutDir, $layoutFile);
+    }
 
     public function dispatchLoopShutdown(Request_Abstract $request, Response_Abstract $response)
     {
@@ -38,16 +42,21 @@ class Layout extends Plugin_Abstract
 
     public function postDispatch(Request_Abstract $request, Response_Abstract $response)
     {
-    	// 获取已响应内容
+    	$layout = new Simple($this->layoutDir);
+
+        // 获取已响应内容
     	$body = $response->getBody();
 
-    	$this->layout->content = $body;
+    	$layout->content = $body;
 
-        $this->layout->module = $request->getModuleName();
-        $this->layout->controller = $request->getControllerName();
-        $this->layout->action = $request->getActionName();
+        $layout->module = $request->getModuleName();
+        $layout->controller = $request->getControllerName();
+        $layout->action = $request->getActionName();
 
-    	$output = $this->layout->render($this->layoutFile);
+
+        $layout->assign($this->vars);
+
+    	$output = $layout->render($this->layoutFile);
     	// 输出数据
     	$response->setBody($output);
 	}
